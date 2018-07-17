@@ -44,7 +44,6 @@ def parseDocx(fileName):
         #提取后面带有数字的小数点
         rr = re.compile(r'\.\d')  #定义提取规则
         noSpot = rr.findall(perParagraphText)
-        #print(none)
         #将小数点及后面的数替换为空
         for each in noSpot:
             perParagraphText = perParagraphText.replace(str(each), '')
@@ -69,13 +68,20 @@ def crawlGoogleScholar(paperTitles):
         # print(req_url)
         html = requests.get(req_url, headers = head).text
 
-        filePath = './html/'
+        filePath = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html'
         perPaperTitle = repChar(perPaperTitle)
         fullFileName = filePath + perPaperTitle + '.html'
         with open(fullFileName, 'w', encoding='utf-8') as f:
             f.write(html)
 
+"""
+Extract useful information
+"""
+def extractUsefulInformation(html):
+
+
+    
 
 if __name__ == '__main__':
-    paperTitles = parseDocx("Doc_Catalog.docx")
+    paperTitles = parseDocx("C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\Doc_Catalog.docx")
     crawlGoogleScholar(paperTitles)
