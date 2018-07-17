@@ -7,7 +7,7 @@ import requests
 from lxml import etree
 
 NumberOfQuotes=[]
-html='https://scholar.google.com.hk/scholar?hl=zh-CN&as_sdt=0%2C5&q=Dose+Definition+and+Physical+Dose+Evaluation+for+the+Human+Body+in+External+Radiation+Accidents&btnG='
+html='C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html\\html_Protein_Probabilities_in_Shotgun_Proteomics__Evaluating_Different_Estimation_Methods_Using_a_Semi-Random_Sampling_Model.html'
 selector=etree.HTML(html)
 #Number Of Quotes
 NumberOfQuotes = selector.xpath(' //*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
