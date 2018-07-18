@@ -83,7 +83,7 @@ def extractInformation(html):
     #Number Of Quotes
     NumberOfQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
     #JumpLink
-    JumpLink=selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/@href')
+    JumpLink=selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3][@href]')
 
     
 
