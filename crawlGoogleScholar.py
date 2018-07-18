@@ -67,7 +67,8 @@ def crawlGoogleScholar(perPaperTitle):
     keyword = parse.quote(perPaperTitle)
     req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
     # print(req_url)
-    html = requests.get(req_url, headers = head).text.encode('UTF-8')
+    html = requests.get(req_url, headers = head)
+    print(type(html))
     return html
 
         # filePath = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html'
@@ -79,15 +80,14 @@ def crawlGoogleScholar(perPaperTitle):
 """
 Extract paper information
 """
-def extractPaperInformation(perPaperTitle):
+def extractPaperInformation(html):
     numberOfQuotes=[]
     jumpLink=[]
     # f = open("F:\\Pythontest1\\douban.txt", "a")
-    perPaperTitle = repChar(perPaperTitle)
-    filePath='C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html\\'+perPaperTitle+'.html'
-    html = open(r"filePath",'wb+')
-    content = html.read()
-    selector=etree.HTML(content)
+    # perPaperTitle = repChar(perPaperTitle)
+    # filePath='C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html\\'+perPaperTitle+'.html'
+    # content = html.read()
+    selector=etree.HTML(html)
 
     # Number Of Quotes
     numberOfQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
