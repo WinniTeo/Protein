@@ -13,6 +13,8 @@ from urllib import parse
 # utils
 from utils import delay, repChar
 
+# parse html
+from lxml import etree
 
 # request headers
 head={
@@ -62,10 +64,10 @@ crawl Google Scholar
 """
 def crawlGoogleScholar(perPaperTitle):
     delay()
-    keyword = parse.quote(paper_url)
+    keyword = parse.quote(perPaperTitle)
     req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
     # print(req_url)
-    html = requests.get(req_url, headers = head).text.encode(utf-8)
+    html = requests.get(req_url, headers = head).text.encode('UTF-8')
     return html
 
         # filePath = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html'
@@ -75,19 +77,31 @@ def crawlGoogleScholar(perPaperTitle):
         #     f.write(html)
 
 """
-Extract information
+Extract paper information
 """
-def extractInformation(html):
-    f = open("F:\\Pythontest1\\douban.txt", "a")
+def extractPaperInformation(perPaperTitle):
+    numberOfQuotes=[]
+    jumpLink=[]
+    # f = open("F:\\Pythontest1\\douban.txt", "a")
+    perPaperTitle = repChar(perPaperTitle)
+    filePath='C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html\\'+perPaperTitle+'.html'
+    html = open(r"filePath",'wb+')
+    content = html.read()
+    selector=etree.HTML(content)
 
-    #Number Of Quotes
-    NumberOfQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
-    #JumpLink
-    JumpLink=selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3][@href]')
+    # Number Of Quotes
+    numberOfQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
+    #print(NumberOfQuotes)
 
-    
+    #jumpLink
+    jumpLink=selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/@href')
+    # for each in JumpLink:
+    #     print(each)
+    return numberOfQuotes,jumpLink
+        
 
 if __name__ == '__main__':
     paperTitles = parseDocx("C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\Doc_Catalog.docx")
-    for perPaperTitle in paperTitles:
-        html=crawlGoogleScholar(paperTitle)
+    for each in paperTitles:
+        html=crawlGoogleScholar(each)
+        print(extractPaperInformation(html))
