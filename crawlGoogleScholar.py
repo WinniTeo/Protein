@@ -60,28 +60,34 @@ def parseDocx(fileName):
 """
 crawl Google Scholar
 """
-def crawlGoogleScholar(paperTitles):
+def crawlGoogleScholar(perPaperTitle):
     delay()
-    for perPaperTitle in paperTitles:
-        keyword = parse.quote(perPaperTitle)
-        req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
-        # print(req_url)
-        html = requests.get(req_url, headers = head).text
+    keyword = parse.quote(paper_url)
+    req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
+    # print(req_url)
+    html = requests.get(req_url, headers = head).text.encode(utf-8)
+    return html
 
-        filePath = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html'
-        perPaperTitle = repChar(perPaperTitle)
-        fullFileName = filePath + perPaperTitle + '.html'
-        with open(fullFileName, 'w', encoding='utf-8') as f:
-            f.write(html)
+        # filePath = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html'
+        # perPaperTitle = repChar(perPaperTitle)
+        # fullFileName = filePath + perPaperTitle + '.html'
+        # with open(fullFileName, 'w', encoding='utf-8') as f:
+        #     f.write(html)
 
 """
-Extract useful information
+Extract information
 """
-def extractUsefulInformation(html):
+def extractInformation(html):
+    f = open("F:\\Pythontest1\\douban.txt", "a")
 
+    #Number Of Quotes
+    NumberOfQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
+    #JumpLink
+    JumpLink=selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/@href')
 
     
 
 if __name__ == '__main__':
     paperTitles = parseDocx("C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\Doc_Catalog.docx")
-    crawlGoogleScholar(paperTitles)
+    for perPaperTitle in paperTitles:
+        html=crawlGoogleScholar(paperTitle)
