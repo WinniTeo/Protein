@@ -7,30 +7,12 @@ import docx
 import re
 
 # crawl page
-import requests
 from urllib import parse
 
 # utils
-from utils import delay, repChar
+from utils import repChar, requestsScholar
 
-# parse html
 from lxml import etree
-
-# request headers
-head={
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'accept-encoding': 'gzip, deflate, br',
-    'accept-language':'zh,en-US;q=0.7,en;q=0.3',
-    'Connection':'keep-alive',
-    'cookie': 'NID=134=JNk5_z1gbwUI3Jxzn8d4tEaJGzwe-4ykbk7GAMw-H-DS8PjmjldzW9nVLNyBWwQnHclW08x3-QNg8M8Ys4T9yFVLog8ZJQGvXTZ7UkjnKVFERuUqVeZnJbm8JWcwF_T0VywVxdvYNuS1hggU-HKX; 1P_JAR=2018-7-16-7; GSP=A=mlDb0Q:CPTS=1531726211:LM=1531726211:S=gdmmbmbj1A_04IvV',
-    'DNT':'1',
-    'Host':'scholar.google.com',
-    'Referer':'https://scholar.google.com/',
-    'upgrade-insecure-requests':'1',
-    'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
-}
-
-
 """
 parse docx and extract title
 """
@@ -46,6 +28,7 @@ def parseDocx(fileName):
         #提取后面带有数字的小数点
         rr = re.compile(r'\.\d')  #定义提取规则
         noSpot = rr.findall(perParagraphText)
+        #print(none)
         #将小数点及后面的数替换为空
         for each in noSpot:
             perParagraphText = perParagraphText.replace(str(each), '')
@@ -62,46 +45,50 @@ def parseDocx(fileName):
 """
 crawl Google Scholar
 """
-def crawlGoogleScholar(perPaperTitle):
-    delay()
-    keyword = parse.quote(perPaperTitle)
-    req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
-    # print(req_url)
-    html = requests.get(req_url, headers = head)
-    print(type(html))
-    return html
+def crawlGoogleScholar(paperTitles):
+    for perPaperTitle in paperTitles:
+        keyword = parse.quote(perPaperTitle)
+        req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
+        html = requestsScholar(req_url).text
 
-        # filePath = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html'
-        # perPaperTitle = repChar(perPaperTitle)
-        # fullFileName = filePath + perPaperTitle + '.html'
-        # with open(fullFileName, 'w', encoding='utf-8') as f:
-        #     f.write(html)
+        selector = etree.HTML(html)
+        perPaperTitle = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/h3/a/text()')
+        print(perPaperTitle)
+        numQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
+        paperUrl = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/@href') 
+        if (len(numQuotes) != 1)or(numQuotes[0] == 'Related articles'):
+            print('There is no the number of quote or there is no searching result...')
+        else:
+            print(numQuotes)
+            print(paperUrl)
+            perPaperTitle = perPaperTitle
+            numQuotes = numQuotes
+            paperUrl = paperUrl
+            citingPapersUrl = 'https://scholar.google.com.hk' + str(paperUrl[0])
+            html = requestsScholar(citingPapersUrl).text
+            selector = etree.HTML(html)
+            citingPapersTitles = selector.xpath('//*[@id="gs_res_ccl_mid"]/div[1]/div[2]/h3/a/text()')
+            pagingUrls = selector.xpath('//*[@id="gs_nml"]/a[2]')
+            if len(pagingUrls)==0:
+                #print(citingPapersTitles)
+                print('There is only one page of citingPapers')
+            else:
+                print('I am loading a new page,please be patient')
+                for pagingUrl in pagingUrls:
+                    fullpagingUrl = 'https://scholar.google.com.hk' + str(pagingUrl)
+                    html = requestsScholar(fullpagingUrl).text
+                    selector = etree.HTML(html)
+                    addCitingPapersTitles = selector.xpath('//*[@id="gs_res_ccl_mid"]/div[1]/div[2]/h3/a/text()')
+                    citingPapersTitles.append(addCitingPapersTitles)
+                print('Add CitingPapersTitles successfully')
 
-"""
-Extract paper information
-"""
-def extractPaperInformation(html):
-    numberOfQuotes=[]
-    jumpLink=[]
-    # f = open("F:\\Pythontest1\\douban.txt", "a")
-    # perPaperTitle = repChar(perPaperTitle)
-    # filePath='C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\html\\'+perPaperTitle+'.html'
-    # content = html.read()
-    selector=etree.HTML(html)
+           
 
-    # Number Of Quotes
-    numberOfQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
-    #print(NumberOfQuotes)
+            #return perPaperTitle,numQuotes,paperUrl
 
-    #jumpLink
-    jumpLink=selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/@href')
-    # for each in JumpLink:
-    #     print(each)
-    return numberOfQuotes,jumpLink
-        
+
+
 
 if __name__ == '__main__':
-    paperTitles = parseDocx("C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\Doc_Catalog.docx")
-    for each in paperTitles:
-        html=crawlGoogleScholar(each)
-        print(extractPaperInformation(html))
+    paperTitles = parseDocx("C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\Doc_Catalog1.docx")
+    crawlGoogleScholar(paperTitles)
