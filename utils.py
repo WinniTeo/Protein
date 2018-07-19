@@ -6,7 +6,7 @@ import random
 
 # requests
 import requests
-
+from lxml import etree
 
 """
 Replace illegal characters
@@ -45,7 +45,29 @@ head={
     'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
 }
 
+
 def requestsScholar(req_url):
     delay()
-    html = requests.get(req_url, headers = head)
+    html = requests.get(req_url, headers = head).text
+    html = etree.HTML(html)
+    return html
+
+head1={
+    'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'accept-encoding' : 'gzip,deflate,br',
+    'accept-language' : 'zh-CN,zh;q=0.9',
+    'cookie' : 'GSP=LM=1531813864:S=z7n4LpZ1xXXaUaek; NID=134=BXqG0WlgnSghUf0uU3s8PsyLdqtdvyQMXmrAlAIt0UsJm0lf_xrwrEsFfTBuogYeBDKUENXYuBBj0fpNxerls8crZdznJFoXFaTHQKaX0Th9nbeDIH3hZNwebawGIINXEhF65bMGwFSGoA',
+    'Referer':'https://scholar.google.com/',
+    'upgrade-insecure-requests' : '1',
+    'user-agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+    'x-client-data' : 'CI22yQEIprbJAQjBtskBCKmdygEI153KAQiln8oBCKijygE='
+}
+
+def requestsPage(req_url):
+    delay()
+    response = requests.get(req_url, headers = head1)
+    print(response)
+    html = response.text
+    print(html)
+    html = etree.HTML(html)
     return html
