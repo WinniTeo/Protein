@@ -47,7 +47,7 @@ crawl Google Scholar
 def crawlGoogleScholar(perPaperTitle):
     keyword = parse.quote(perPaperTitle)
     req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
-    html = requestsScholar(req_url).text
+    html = requestsPage(req_url).text
     selector = etree.HTML(html)
     # 文章标题
     perPaperTitle = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/h3/a/text()')
