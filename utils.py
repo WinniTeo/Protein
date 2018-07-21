@@ -8,11 +8,13 @@ import random
 import requests
 from lxml import etree
 
+# headers
+import headers
 """
 Replace illegal characters
 """
 def repChar(character):
-    pattern = u'[\\s\\\\/:\\*\\?\\\"<>\\|]'
+    pattern = r'[\\s\\\\/:\\*\\?\\\"<>\\|]'
     prog = re.compile(pattern)
     newCharacter = prog.sub('_', character)
     return newCharacter
@@ -28,46 +30,21 @@ def delay():
     time.sleep(delayTime)
 
 
-"""
-requests package
-"""
-# request headers
-head={
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'accept-encoding': 'gzip, deflate, br',
-    'accept-language':'zh,en-US;q=0.7,en;q=0.3',
-    'Connection':'keep-alive',
-    'cookie': 'GSP=LM=1531813864:S=z7n4LpZ1xXXaUaek; NID=134=BXqG0WlgnSghUf0uU3s8PsyLdqtdvyQMXmrAlAIt0UsJm0lf_xrwrEsFfTBuogYeBDKUENXYuBBj0fpNxerls8crZdznJFoXFaTHQKaX0Th9nbeDIH3hZNwebawGIINXEhF65bMGwFSGoA',
-    'DNT':'1',
-    'Host':'scholar.google.com',
-    'Referer':'https://scholar.google.com/',
-    'upgrade-insecure-requests':'1',
-    'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
-}
-
-
-def requestsScholar(req_url):
-    delay()
-    html = requests.get(req_url, headers = head).text
-    html = etree.HTML(html)
-    return html
-
-head1={
-    'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-    'accept-encoding' : 'gzip,deflate,br',
-    'accept-language' : 'zh-CN,zh;q=0.9',
-    'cookie' : 'GSP=LM=1531813864:S=z7n4LpZ1xXXaUaek; NID=134=BXqG0WlgnSghUf0uU3s8PsyLdqtdvyQMXmrAlAIt0UsJm0lf_xrwrEsFfTBuogYeBDKUENXYuBBj0fpNxerls8crZdznJFoXFaTHQKaX0Th9nbeDIH3hZNwebawGIINXEhF65bMGwFSGoA',
-    'Referer':'https://scholar.google.com/',
-    'upgrade-insecure-requests' : '1',
-    'user-agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
-    'x-client-data' : 'CI22yQEIprbJAQjBtskBCKmdygEI153KAQiln8oBCKijygE='
-}
-
 def requestsPage(req_url):
     delay()
-    response = requests.get(req_url, headers = head1)
-    print(response)
-    html = response.text
-    print(html)
-    html = etree.HTML(html)
+    html = requests.get(req_url, headers = headers.getHeader())
     return html
+
+
+def appendPapersTitles(pagingUrl,citingPapersTitles):
+    fullPageUrl = 'https://scholar.google.com.hk' + pagingUrl
+    html = requestsPage(fullPageUrl).text
+    selector = etree.HTML(html)        
+    addCitingPapersTitles = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div/h3/a/text()')
+    citingPapersTitles = citingPapersTitles + addCitingPapersTitles
+    return citingPapersTitles
+
+if __name__ == '__main__':
+    page = requestsPage("https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=learn&oq=")
+    with open('test.html', 'w', encoding = 'utf-8') as f:
+        f.write(page.text)
