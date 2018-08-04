@@ -1,0 +1,13 @@
+use crawlGoogleScholar
+CREATE TABLE informationOfPapers(
+title_of_paper varchar(200) not null,
+number_of_quotes varchar(5) not null,
+citing_paper_titles varchar(max)
+)
+show tables;
+select * from informationofpapers;
+desc informationOfPapers;
+
+alter table informationofpapers add citing_paper_titles varchar(8000) not null comment '新添加的字段'  
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'user123';
+exit

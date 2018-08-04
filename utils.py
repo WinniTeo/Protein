@@ -8,8 +8,9 @@ import random
 import requests
 from lxml import etree
 
-# headers
-import headers
+# requests headers
+from headers_class import Headers
+
 """
 Replace illegal characters
 """
@@ -19,11 +20,9 @@ def repChar(character):
     newCharacter = prog.sub('_', character)
     return newCharacter
 
-
     
 """
 Random delay
-
 """
 def delay():
     delayTime = random.uniform(1, 3)
@@ -32,7 +31,8 @@ def delay():
 
 def requestsPage(req_url):
     delay()
-    html = requests.get(req_url, headers = headers.getHeader())
+    head=Headers()
+    html = requests.get(req_url, headers = head.getHeader())
     return html
 
 
