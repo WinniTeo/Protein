@@ -11,3 +11,32 @@ desc informationOfPapers;
 alter table informationofpapers add citing_paper_titles varchar(8000) not null comment '新添加的字段'  
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'user123';
 exit
+
+
+
+if __name__ == '__main__':
+    absolutePathOfTheFile = sys.argv[1]
+    paperTitles = parseDocx(absolutePathOfTheFile)
+    for perPaperTitle in paperTitles:
+        data = crawlGoogleScholar(perPaperTitle)
+        numQuotes = data[0]
+        citingPapersUrl = data[1]
+        if len(citingPapersUrl):
+            citingPapersTitles = crawlCitingPapersTitles(citingPapersUrl)
+            print('****************************————————————————————————————————————————————')
+            print(data[0])
+            print(data[1])
+            print(citingPapersTitles)
+            print(len(citingPapersTitles))
+            print('————————————————————————————————————————————****************************')
+
+
+'FTDR 2.0: A Tool To Achieve Sub-ppm Level Recalibrated Accuracy in Routine LC-MS Analysis' 'Zhang J#, Ma J#, Zhang W, Xu C, Zhu Y*, Xie H*' 'Zhu Y*, Xie H*' 'Zhang J#, Ma J#' '朱云平' '朱云平' '朱云平' 'J Proteome Res' '2013-09-06' '蛋白质研究中心'
+
+#删除全部记录
+truncate table paperlist;
+#外键设为无效
+SET FOREIGN_KEY_CHECKS=0;
+
+update mysql.user set authentication_string=password("123456") where user="root"
+UPDATE user SET authentication_string=PASSWORD("123456") WHERE User="root"

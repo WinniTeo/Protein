@@ -2,10 +2,6 @@
 crawl Google Scholar
 """
 
-# parse docx
-import docx
-import re
-
 # crawl page
 from urllib import parse
 
@@ -15,49 +11,10 @@ from utils import repChar,requestsPage, appendPapersTitles
 # parse html
 from lxml import etree
 
-#fetch the parameter
-import sys
-
-
-"""
-parse docx and extract title
-"""
-def parseDocx(fileName):
-    """抓取do
-
-    获取文档中每段的论文信息。将影响分割结果的数字前的英文符号'.'去除。以英文字符
-    '.'分割作者，论文题目以及其他信息。提取列表中的第个元素即为论文标题。
-
-    Args:
-        docxFile: 论文文档
-        paperTitles: 保存论文标题的list
-        noSpot: 需要在段落中去除的部分，即数字前面的小数点以
-            及这一位数字
-        perParagraph: 每一段的论文
-        perParagraphText: 每一段的论文文本
-        rr: 匹配需要删去的文本的规则
-
-    Returns:
-        一个包含文档中所有论文名称的list
-    """
-    docxFile = docx.Document(fileName)
-    paperTitles = []
-    noSpot = []
-    for perParagraph in docxFile.paragraphs:
-        perParagraphText = perParagraph.text
-        rr = re.compile(r'\.\d') 
-        noSpot = rr.findall(perParagraphText)
-        for each in noSpot:
-            perParagraphText = perParagraphText.replace(str(each), '') 
-        perParagraphText = perParagraphText.split('.')
-        paperTitles.append(perParagraphText[1])
-    return paperTitles
-
-
 """
 crawl Google Scholar
 """
-def crawlGoogleScholar(perPaperTitle):
+def crawlGoogleScholar(paperTitle):
     """爬取论文标题、论文引用次数及其链接
 
     将论文标题进行html的url编码，生成完整的请求链接。对GoogleScholar进行请求，获
@@ -79,18 +36,17 @@ def crawlGoogleScholar(perPaperTitle):
     Returns:
         论文标题、论文引用次数及其链接，这是一个tuple
     """
-    keyword = parse.quote(perPaperTitle)
+    keyword = parse.quote(paperTitle)
     req_url = 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+keyword+'&btnG='
     html = requestsPage(req_url).text
     selector = etree.HTML(html)
-    perPaperTitle = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/h3/a/text()')
     numQuotes = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/text()')
     citingPapersUrl = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div[2]/div[3]/a[3]/@href')
     if (len(numQuotes) != 1)or(numQuotes[0] == 'Related articles'):
         print('There is no the number of quote or there is no searching result...')
-        return [],[],[]
+        return [],[]
     else:
-        return perPaperTitle[0],numQuotes[0],citingPapersUrl[0]
+        return numQuotes[0],citingPapersUrl[0]
 
 
 """
@@ -133,21 +89,18 @@ def crawlCitingPapersTitles(citingPapersUrl):
     return citingPapersTitles
 
 
-
-if __name__ == '__main__':
-    absolutePathOfTheFile = sys.argv[1]
-    paperTitles = parseDocx(absolutePathOfTheFile)
-    for perPaperTitle in paperTitles:
-        data = crawlGoogleScholar(perPaperTitle)
-        perPaperTitle = data[0]
-        numQuotes = data[1]
-        citingPapersUrl = data[2]
-        if len(citingPapersUrl):
-            citingPapersTitles = crawlCitingPapersTitles(citingPapersUrl)
-            print('****************************————————————————————————————————————————————')
-            print(data[0])
-            print(data[1])
-            print(citingPapersTitles)
-            print(len(citingPapersTitles))
-            print('————————————————————————————————————————————****************************')
-            
+def collectPaperInf(paperTitle):
+    data = crawlGoogleScholar(paperTitle)
+    numQuotes = data[0]
+    citingPapersUrl = data[1]
+    if len(citingPapersUrl):
+        citingPapersTitles = crawlCitingPapersTitles(citingPapersUrl)
+        print('****************************————————————————————————————————————————————')
+        print(data[0])
+        print(data[1])
+        print(citingPapersTitles)
+        print(len(citingPapersTitles))
+        print('————————————————————————————————————————————****************************')
+        return numQuotes,citingPapersTitles
+    else:
+        return [],[]
