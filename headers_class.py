@@ -69,8 +69,9 @@ class Headers(object):
             'User-Agent': self.userAgent
         }
         self.homePage = "https://scholar.google.com/"
-        self.proxies = Proxies()
-        self.response = requests.get(self.homePage, headers=self.firstHeaders, proxies = self.proxies.getProxies())
+        # self.proxies = Proxies()
+        # , proxies = self.proxies.getProxies()
+        self.response = requests.get(self.homePage, headers=self.firstHeaders)
         self.cookiesDict = self.response.cookies.get_dict()
         self.cookies = json.dumps(self.cookiesDict)
         return self.cookies, self.userAgent
