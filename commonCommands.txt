@@ -5,7 +5,7 @@ number_of_quotes varchar(5) not null,
 citing_paper_titles varchar(max)
 )
 show tables;
-select * from informationofpapers;
+select * from paperlist;
 desc informationOfPapers;
 
 alter table informationofpapers add citing_paper_titles varchar(8000) not null comment '新添加的字段'  

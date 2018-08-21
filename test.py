@@ -1,9 +1,8 @@
 
 import pymysql
-
 #fetch the parameter
 import sys
-
+import datetime
 # Open database connection
 db = pymysql.connect("localhost", "root", "user123", "papercrawler", charset = 'utf8' )
 
@@ -30,12 +29,15 @@ month = date[6:] #时间格式为****-**-**，获取日期
 year = date[0:4]
 print(month)
 print('IF_'+ year)
+dt =datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # 将命令行数据插入paperlist数据库
 sql='''insert into paperlist
-(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, data, institution, citeNumber) 
+(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, date, institution, citeNumber, checkDate) 
 values
-('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')'''%(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], citeNumber)
+('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')'''%(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, date, institution, citeNumber,dt)
+print(sql)
+
 try:
     # Execute the SQL command
     cursor.execute(sql)
@@ -53,7 +55,7 @@ if month >= '07-01':
 else:
     year = year
     print('below')
-print(type(year))
+# print(type(year))
 
 if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year == '2011' or year == '2012' or year == '2013' or year == '2014' or year == '2015' or year == '2016' or year == '2018'):
     sql = "SELECT IF_" + year + " FROM impactFactor WHERE journal='" + journal + "' or abbreviation='" + journal + "'"
@@ -66,9 +68,11 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
         # Rollback in case there is any error
         db.rollback()
     impactFactor = cursor.fetchone()
-    print(impactFactor)
+    impactFactor = str(impactFactor[0])
+    print(impactFactor[0])
     if impactFactor:
-        sql = "UPDATE paperList SET impactFactor='" + str(impactFactor[0]) + "' WHERE title='" + journal + "'" 
+        sql = "UPDATE paperList SET impactFactor='" + impactFactor + "' WHERE journal='" + journal + "'"
+        print(sql)
         try:
             # Execute the SQL command
             cursor.execute(sql)
