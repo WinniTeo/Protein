@@ -65,28 +65,41 @@ for i in range(1,nrows):
     row_data = sheet1.row_values(i)
     journal = row_data[0]
     IF_2018 = row_data[1]
-    sql='''insert ignore into impactfactor
-    (journal)
-    values
-    ('%s')'''%(journal)
+    isExistSql = "SELECT journal FROM impactFactor WHERE journal='" + journal + "'"
     try:
         # Execute the SQL command
-        cursor.execute(sql)
+        cursor.execute(isExistSql)
         # Commit your changes in the database
         db.commit()
     except:
         # Rollback in case there is any error
         db.rollback()
-    sql = '''UPDATE impactfactor SET IF_2018 = '%s' 
-    WHERE journal = '%s'
-    ''' %(IF_2018, journal)
-    try:
-        # Execute the SQL command
-        cursor.execute(sql)
-        # Commit your changes in the database
-        db.commit()
-    except:
-        # Rollback in case there is any error
-        db.rollback()
+    callback = cursor.fetchone()
+    print(callback)
+    if callback:
+        sql = '''UPDATE impactfactor SET IF_2018 = '%s' 
+        WHERE journal = '%s'
+        ''' %(IF_2018, journal)
+        try:
+            # Execute the SQL command
+            cursor.execute(sql)
+            # Commit your changes in the database
+            db.commit()
+        except:
+            # Rollback in case there is any error
+            db.rollback()  
+    else:
+        sql='''insert ignore into impactfactor
+        (journal, IF_2018)
+        values
+        ('%s', '%s')'''%(journal, IF_2018)
+        try:
+            # Execute the SQL command
+            cursor.execute(sql)
+            # Commit your changes in the database
+            db.commit()
+        except:
+            # Rollback in case there is any error
+            db.rollback() 
 
 db.close()

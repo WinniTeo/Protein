@@ -1,59 +1,106 @@
-#!/usr/bin/python3
 
 import pymysql
 
 #fetch the parameter
 import sys
 
-# # Open database connection
-# db = pymysql.connect("localhost","root","user123","crawlGoogleScholar" )
+# Open database connection
+db = pymysql.connect("localhost", "root", "user123", "papercrawler", charset = 'utf8' )
 
-# # prepare a cursor object using cursor() method
-# cursor = db.cursor()
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
 
 """
 导入数据到paperList
 """
-a_1 = sys.argv[1]
-a_2 = sys.argv[2]
-a_3 = sys.argv[3]
-a_4 = sys.argv[4]
-a_5 = sys.argv[5]
-a_6 = sys.argv[6]
-a_7 = sys.argv[7]
-a_8 = sys.argv[8]
-a_9 = sys.argv[9]
-a_10 = sys.argv[10]
+title = sys.argv[1]
+author = sys.argv[2]
+corAuthor = sys.argv[3]
+firstAuthor = sys.argv[4]
+author_chs = sys.argv[5]
+corAuthor_chs = sys.argv[6]
+firstAuthor_chs = sys.argv[7]
+journal = sys.argv[8]
+date = sys.argv[9]
+institution = sys.argv[10]
+citeNumber = 200
+# citeNumber = collectPaperInf(title)[0]
+# citingPapersTitles = collectPaperInf(title)[1]
+month = date[6:] #时间格式为****-**-**，获取日期
+year = date[0:4]
+print(month)
+print('IF_'+ year)
 
-print(type(sys.argv[1]))
-print(type(sys.argv[2]))
-print(type(sys.argv[3]))
-print(type(sys.argv[4]))
-print(type(sys.argv[5]))
-print(type(sys.argv[6]))
-print(type(sys.argv[7]))
-print(type(sys.argv[8]))
-print(type(sys.argv[9]))
-print(type(sys.argv[10]))
-print(sys.argv[2])
-print(sys.argv[3])
-print(sys.argv[4])
-print(sys.argv[5])
-print(sys.argv[6])
-print(sys.argv[7])
-print(sys.argv[8])
-print(sys.argv[9])
-print(sys.argv[10])
-# sql='''insert ignore into paperlist
-# (title, author, corAuthor, firstAuthor) 
-# values
-# ('%s', '%s', '%s', '%s', '%s')'''%(a_1, a_2, a_3, a_4, a_10)
+# 将命令行数据插入paperlist数据库
+sql='''insert into paperlist
+(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, data, institution, citeNumber) 
+values
+('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')'''%(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10], citeNumber)
+try:
+    # Execute the SQL command
+    cursor.execute(sql)
+    # Commit your changes in the database
+    db.commit()
+except:
+    # Rollback in case there is any error
+    db.rollback()
 
-# try:
-#     # Execute the SQL command
-#     cursor.execute(sql)
-#     # Commit your changes in the database
-#     db.commit()
-# except:
-#     # Rollback in case there is any error
-#     db.rollback()
+# 获取正确的影响因子，更新impactFactor字段
+if month >= '07-01':
+    year = str(int(year)+1)
+    print(year)
+    print('beyond')
+else:
+    year = year
+    print('below')
+print(type(year))
+
+if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year == '2011' or year == '2012' or year == '2013' or year == '2014' or year == '2015' or year == '2016' or year == '2018'):
+    sql = "SELECT IF_" + year + " FROM impactFactor WHERE journal='" + journal + "' or abbreviation='" + journal + "'"
+    try:
+        # Execute the SQL command
+        cursor.execute(sql)
+        # Commit your changes in the database
+        db.commit()
+    except:
+        # Rollback in case there is any error
+        db.rollback()
+    impactFactor = cursor.fetchone()
+    print(impactFactor)
+    if impactFactor:
+        sql = "UPDATE paperList SET impactFactor='" + str(impactFactor[0]) + "' WHERE title='" + journal + "'" 
+        try:
+            # Execute the SQL command
+            cursor.execute(sql)
+            # Commit your changes in the database
+            db.commit()
+        except:
+            # Rollback in case there is any error
+            db.rollback()   
+    # 当影响因子为空，设impactFactor为-1               
+    else:
+        sql = "UPDATE paperList SET impactFactor = -1 WHERE title='" + journal + "'"
+        cursor.execute(sql)
+        try:
+            # Execute the SQL command
+            cursor.execute(sql)
+            # Commit your changes in the database
+            db.commit()
+        except:
+            # Rollback in case there is any error
+            db.rollback() 
+# 当年份不存在，设impactFactor为-2
+else:
+    sql = "UPDATE paperList SET impactFactor = -2 WHERE title='" + journal + "'"
+    cursor.execute(sql)
+    try:
+        # Execute the SQL command
+        cursor.execute(sql)
+        # Commit your changes in the database
+        db.commit()
+    except:
+        # Rollback in case there is any error
+        db.rollback() 
+
+db.close()
+

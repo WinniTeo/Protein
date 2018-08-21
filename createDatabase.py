@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+
 #coding=utf-8
 
 
@@ -12,11 +12,11 @@ sql = """CREATE TABLE if not EXISTS `paperList` (
   `corAuthor_chs` varchar(50) DEFAULT NULL,
   `firstAuthor_chs` varchar(50) DEFAULT NULL,
   `journal` varchar(100) DEFAULT NULL,
-  `date` date DEFAULT NULL,
+  `date` char(10) DEFAULT NULL,
   `institution` varchar(100) DEFAULT NULL,
   `citeNumber` int DEFAULT NULL,
   `checkDate` datetime DEFAULT NULL,
-  `impactFactor` varchar(20) DEFAULT NULL
+  `impactFactor` decimal(6,3) DEFAULT NULL
 )"""
 
 
@@ -28,16 +28,17 @@ sql = """CREATE TABLE if not EXISTS `citePaper` (
 )"""
 
 sql = """CREATE TABLE if not EXISTS `impactFactor` (
+  `ID` int primary key not null auto_increment,
   `journal` varchar(200) DEFAULT NULL,
   `abbreviation` varchar(20) DEFAULT NULL,
-  `IF_2008` varchar(20)  DEFAULT NULL,
-  `IF_2009` varchar(20)  DEFAULT NULL,
-  `IF_2010` varchar(20)  DEFAULT NULL,
-  `IF_2011` varchar(20)  DEFAULT NULL,
-  `IF_2012` varchar(20)  DEFAULT NULL,
-  `IF_2013` varchar(20)  DEFAULT NULL,
-  `IF_2014` varchar(20)  DEFAULT NULL,
-  `IF_2015` varchar(20)  DEFAULT NULL,
-  `IF_2016` varchar(20)  DEFAULT NULL,
-  `IF_2018` varchar(20)  DEFAULT NULL
+  `IF_2008` decimal(6,3)  DEFAULT NULL,
+  `IF_2009` decimal(6,3)  DEFAULT NULL,
+  `IF_2010` decimal(6,3)  DEFAULT NULL,
+  `IF_2011` decimal(6,3)  DEFAULT NULL,
+  `IF_2012` decimal(6,3)  DEFAULT NULL,
+  `IF_2013` decimal(6,3)  DEFAULT NULL,
+  `IF_2014` decimal(6,3)  DEFAULT NULL,
+  `IF_2015` decimal(6,3)  DEFAULT NULL,
+  `IF_2016` decimal(6,3)  DEFAULT NULL,
+  `IF_2018` decimal(6,3)  DEFAULT NULL
 )"""
