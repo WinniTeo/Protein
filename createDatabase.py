@@ -14,7 +14,7 @@ sql = """CREATE TABLE if not EXISTS `paperList` (
   `journal` varchar(100) DEFAULT NULL,
   `date` char(10) DEFAULT NULL,
   `institution` varchar(100) DEFAULT NULL,
-  `citeNumber` int DEFAULT NULL,
+  `citeNumber` int DEFAULT 0 NOT NULL,
   `checkDate` datetime DEFAULT NULL,
   `impactFactor` decimal(6,3) DEFAULT NULL
 )"""

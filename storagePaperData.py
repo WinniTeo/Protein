@@ -27,7 +27,7 @@ institution = sys.argv[10]
 
 # 调用爬虫获取论文引用次数，引用论文标题
 crawlResult = collectPaperInf(title)
-citeNumber = crawlResult[0]
+citeNumber = str(crawlResult[0])
 citingPapersTitles = crawlResult[1]
 # 分割字符串，获取年份月份
 year = date[0:4]
@@ -37,10 +37,10 @@ month = date[6:] #时间格式为****-**-**
 dt =datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # 将命令行数据插入paperlist数据库
-sql='''insert into paperlist
-(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, date, institution, citeNumber, checkDate) 
+sql='''insert ignore into paperlist
+(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, date, institution, checkDate) 
 values
-('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')'''%(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, date, institution, citeNumber,dt)
+('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')'''%(title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, date, institution, dt)
 try:
     # Execute the SQL command
     cursor.execute(sql)
@@ -50,11 +50,24 @@ except:
     # Rollback in case there is any error
     db.rollback()
 
+# 当爬取的引用数不为空时，更新paperList中的citeNumber字段
+if citeNumber:
+    updateSql = "UPDATE paperList SET citeNumber='" + citeNumber + "' WHERE title='" + title + "'"
+    try:
+        # Execute the SQL command
+        cursor.execute(updateSql)
+        # Commit your changes in the database
+        db.commit()
+    except:
+        # Rollback in case there is any error
+        db.rollback()
+
 # 获取正确的影响因子，更新impactFactor字段
 if month >= '07-01':
     year = str(int(year)+1)
 else:
     year = year
+
 # 检测数据库是否存有此年份的影响因子
 # 如果有获取影响因子
 if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year == '2011' or year == '2012' or year == '2013' or year == '2014' or year == '2015' or year == '2016' or year == '2018'):
@@ -72,8 +85,7 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
     impactFactor = str(impactFactor[0])
     # 当影响因子不为空时，更新paperlist中当前论文的impactFactor字段
     if impactFactor:
-        sql = "UPDATE paperList SET impactFactor='" + impactFactor + "' WHERE journal='" + journal + "'"
-        print(sql)
+        sql = "UPDATE paperList SET impactFactor='" + impactFactor + "' WHERE title='" + title + "'"
         try:
             # Execute the SQL command
             cursor.execute(sql)
@@ -84,8 +96,7 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
             db.rollback()   
     # 当影响因子为空，设impactFactor为-1               
     else:
-        sql = "UPDATE paperList SET impactFactor = -1 WHERE title='" + journal + "'"
-        cursor.execute(sql)
+        sql = "UPDATE paperList SET impactFactor = -1 WHERE title='" + title + "'"
         try:
             # Execute the SQL command
             cursor.execute(sql)
@@ -96,8 +107,7 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
             db.rollback() 
 # 当年份不存在，设impactFactor为-2
 else:
-    sql = "UPDATE paperList SET impactFactor = -2 WHERE title='" + journal + "'"
-    cursor.execute(sql)
+    sql = "UPDATE paperList SET impactFactor = -2 WHERE title='" + title + "'"
     try:
         # Execute the SQL command
         cursor.execute(sql)
@@ -121,19 +131,21 @@ except:
     # Rollback in case there is any error
     db.rollback()
 ID = cursor.fetchone()
-ID = ID[0]
+ID = str(ID[0])
 
 # 将全部引用论文存入citepaper数据表中
-for citingPapersTitle in citingPapersTitles:
-    insertSql = "insert into citepaper(title, originalPaperID)values('" + citingPapersTitle + "','" + ID + "')"
-    try:
-        # Execute the SQL command
-        cursor.execute(insertSql)
-        # Commit your changes in the database
-        db.commit()
-    except:
-        # Rollback in case there is any error
-        db.rollback()
+# 判断爬取的论文标题是否为空
+if citingPapersTitles:
+    for citingPapersTitle in citingPapersTitles:
+        insertSql = "insert into citepaper(title, originalPaperID)values('" + citingPapersTitle + "','" + ID + "')"
+        try:
+            # Execute the SQL command
+            cursor.execute(insertSql)
+            # Commit your changes in the database
+            db.commit()
+        except:
+            # Rollback in case there is any error
+            db.rollback()
 
 db.close()
 

@@ -30,13 +30,6 @@ if __name__ == '__main__':
             print(len(citingPapersTitles))
             print('————————————————————————————————————————————****************************')
 
-
-'FTDR 2.0: A Tool To Achieve Sub-ppm Level Recalibrated Accuracy in Routine LC-MS Analysis' 'Zhang J#, Ma J#, Zhang W, Xu C, Zhu Y*, Xie H*' 'Zhu Y*, Xie H*' 'Zhang J#, Ma J#' '朱云平' '朱云平' '朱云平' 'J Proteome Res' '2013-09-06' '蛋白质研究中心'
-
-'FTDR 2.0: A Tool To Achieve Sub-ppm Level Recalibrated Accuracy in Routine LC-MS Analysis' 'Zhang J#, Ma J#, Zhang W, Xu C, Zhu Y*, Xie H*' 'Zhu Y*, Xie H*' 'Zhang J#, Ma J#' '朱云平' '朱云平' '朱云平' 'J Proteome Res' '2019-09-06' '蛋白质研究中心'
-
-'FTDR 2.0: A Tool To Achieve Sub-ppm Level Recalibrated Accuracy in Routine LC-MS Analysis' 'Zhang J#, Ma J#, Zhang W, Xu C, Zhu Y*, Xie H*' 'Zhu Y*, Xie H*' 'Zhang J#, Ma J#' '朱云平' '朱云平' '朱云平' 'abc' '2015-09-06' '蛋白质研究中心'
-
 #删除全部记录
 truncate table paperlist;
 #外键设为无效
@@ -45,4 +38,8 @@ SET FOREIGN_KEY_CHECKS=0;
 update mysql.user set authentication_string=password("123456") where user="root"
 UPDATE user SET authentication_string=PASSWORD("123456") WHERE User="root"
 
-iz0lf6ixef+E
+测试：
+1.
+'A novel parametric approach to mine gene regulatory relationship from microarray datasets' 'Zhang J#, Ma J#, Zhang W, Xu C, Zhu Y*, Xie H*' 'Zhu Y*, Xie H*' 'Zhang J#, Ma J#' '朱云平' '朱云平' '朱云平' 'J Proteome Res' '2013-09-06' '蛋白质研究中心'
+
+'Computational identification of rare codons of Escherichia coli based on codon pairs preference' 'Zhang J#, Ma J#, Zhang W, Xu C, Zhu Y*, Xie H*' 'Zhu Y*, Xie H*' 'Zhang J#, Ma J#' '朱云平' '朱云平' '朱云平' 'J Proteome Res' '2013-09-06' '蛋白质研究中心'

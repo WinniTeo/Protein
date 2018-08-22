@@ -23,7 +23,7 @@ for title in titles:
     title = title[0]
     # 获取最新的论文引用次数和引用论文标题
     crawlResult = collectPaperInf(title)
-    newCiteNumber = crawlResult[0]
+    newCiteNumber = str(crawlResult[0])
     newCitingPapersTitles = crawlResult[1]
 
     # 获取数据库中的论文引用次数
