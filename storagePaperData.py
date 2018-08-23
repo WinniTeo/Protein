@@ -31,6 +31,7 @@ citeNumber = str(crawlResult[0])
 citingPapersTitles = crawlResult[1]
 # 分割字符串，获取年份月份
 year = date[0:4]
+year = str(int(year)+1)
 month = date[6:] #时间格式为****-**-**
 
 # 获取当前时间
@@ -62,12 +63,6 @@ if citeNumber:
         # Rollback in case there is any error
         db.rollback()
 
-# 获取正确的影响因子，更新impactFactor字段
-if month >= '07-01':
-    year = str(int(year)+1)
-else:
-    year = year
-
 # 检测数据库是否存有此年份的影响因子
 # 如果有获取影响因子
 if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year == '2011' or year == '2012' or year == '2013' or year == '2014' or year == '2015' or year == '2016' or year == '2018'):
@@ -94,9 +89,9 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
         except:
             # Rollback in case there is any error
             db.rollback()   
-    # 当影响因子为空，设impactFactor为-1               
+    # 当影响因子为空，设impactFactor为0               
     else:
-        sql = "UPDATE paperList SET impactFactor = -1 WHERE title='" + title + "'"
+        sql = "UPDATE paperList SET impactFactor = 0 WHERE title='" + title + "'"
         try:
             # Execute the SQL command
             cursor.execute(sql)
@@ -105,9 +100,9 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
         except:
             # Rollback in case there is any error
             db.rollback() 
-# 当年份不存在，设impactFactor为-2
+# 当年份不存在，设impactFactor为0
 else:
-    sql = "UPDATE paperList SET impactFactor = -2 WHERE title='" + title + "'"
+    sql = "UPDATE paperList SET impactFactor = 0 WHERE title='" + title + "'"
     try:
         # Execute the SQL command
         cursor.execute(sql)

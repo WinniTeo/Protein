@@ -35,8 +35,3 @@ def requestsPage(req_url):
     html = requests.get(req_url, headers = head.getHeader())
     return html
 
-
-if __name__ == '__main__':
-    page = requestsPage("https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=learn&oq=")
-    with open('test.html', 'w', encoding = 'utf-8') as f:
-        f.write(page.text)
