@@ -1,9 +1,13 @@
 
 import pymysql
 # fetch the parameter
-import sys
 import datetime
+
+import xlrd  
+import xlwt 
+
 from collectPaperInf import collectPaperInf
+
 # Open database connection
 db = pymysql.connect("localhost", "root", "user123", "papercrawler", charset = 'utf8' )
 
@@ -13,17 +17,25 @@ cursor = db.cursor()
 """
 导入数据到paperList
 """
-# 获取键盘数据
-title = sys.argv[1]
-author = sys.argv[2]
-corAuthor = sys.argv[3]
-firstAuthor = sys.argv[4]
-author_chs = sys.argv[5]
-corAuthor_chs = sys.argv[6]
-firstAuthor_chs = sys.argv[7]
-journal = sys.argv[8]
-date = sys.argv[9]
-institution = sys.argv[10]
+# 获取论文数据
+path = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\input\\input.xlsx'
+# 打开文件  
+workbook = xlrd.open_workbook(path)  
+# 根据sheet索引或者名称获取sheet内容  
+sheet1 = workbook.sheet_by_index(0) # sheet索引从0开始  
+sheet1 = workbook.sheet_by_name('sheet1')
+# 获取第二数行据  
+row_data = sheet1.row_values(2)
+title = row_data[1]
+author = row_data[2]
+corAuthor = row_data[3]
+firstAuthor = row_data[4]
+author_chs = row_data[5]
+corAuthor_chs = row_data[6]
+firstAuthor_chs = row_data[7]
+journal = row_data[8]
+date = row_data[9]
+institution = row_data[10]
 
 # 调用爬虫获取论文引用次数，引用论文标题
 crawlResult = collectPaperInf(title)
@@ -65,7 +77,7 @@ if citeNumber:
 
 # 检测数据库是否存有此年份的影响因子
 # 如果有获取影响因子
-if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year == '2011' or year == '2012' or year == '2013' or year == '2014' or year == '2015' or year == '2016' or year == '2018'):
+if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year == '2011' or year == '2012' or year == '2013' or year == '2014' or year == '2015' or year == '2017'):
 
     sql = "SELECT IF_" + year + " FROM impactFactor WHERE journal='" + journal + "' or abbreviation='" + journal + "'"
     try:
@@ -80,7 +92,7 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
     impactFactor = str(impactFactor[0])
     # 当影响因子不为空时，更新paperlist中当前论文的impactFactor字段
     if impactFactor:
-        sql = "UPDATE paperList SET impactFactor='" + impactFactor + "' WHERE title='" + title + "'"
+        sql = "UPDATE paperList SET impactFactor='" + impactFactor + "',currentState='T' WHERE title='" + title + "'"
         try:
             # Execute the SQL command
             cursor.execute(sql)

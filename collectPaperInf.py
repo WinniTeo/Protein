@@ -6,7 +6,7 @@ crawl Google Scholar
 from urllib import parse
 
 # utils
-from utils import repChar,requestsPage
+from utils import requestsPage
 
 # parse html
 from lxml import etree
@@ -82,7 +82,7 @@ def crawlCitingPapersTitles(citingPapersUrl):
     citingPapersTitles = selector.xpath('//*[@id="gs_res_ccl_mid"]/div/div/h3/a/text()')
     pageUrls = selector.xpath('//*[@id="gs_nml"]/a/@href')
     # 通过翻页链接是否存在，判断是否翻页
-    if len(pageUrls)!=0:
+    if pageUrls:
         for pageUrl in pageUrls:
             citingPapersTitles = appendPapersTitles(pageUrl,citingPapersTitles)
     return citingPapersTitles

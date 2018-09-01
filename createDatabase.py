@@ -17,7 +17,8 @@ sql = """CREATE TABLE if not EXISTS `paperList` (
   `citeNumber` int DEFAULT 0 NOT NULL,
   `checkDate` datetime DEFAULT NULL,
   `impactFactor` decimal(6,3) DEFAULT NULL
-)"""
+  `currentState` char(1) DEFAULT 'F'
+)""" 
 
 
 sql = """CREATE TABLE if not EXISTS `citePaper` (
@@ -31,6 +32,7 @@ sql = """CREATE TABLE if not EXISTS `impactFactor` (
   `ID` int primary key not null auto_increment,
   `journal` varchar(200) DEFAULT NULL,
   `abbreviation` varchar(20) DEFAULT NULL,
+  `IF_2007` decimal(6,3)  DEFAULT NULL,
   `IF_2008` decimal(6,3)  DEFAULT NULL,
   `IF_2009` decimal(6,3)  DEFAULT NULL,
   `IF_2010` decimal(6,3)  DEFAULT NULL,
@@ -39,6 +41,9 @@ sql = """CREATE TABLE if not EXISTS `impactFactor` (
   `IF_2013` decimal(6,3)  DEFAULT NULL,
   `IF_2014` decimal(6,3)  DEFAULT NULL,
   `IF_2015` decimal(6,3)  DEFAULT NULL,
-  `IF_2016` decimal(6,3)  DEFAULT NULL,
-  `IF_2018` decimal(6,3)  DEFAULT NULL
+  `IF_2017` decimal(6,3)  DEFAULT NULL，
+
+  `IF_2018` decimal(6,3)  DEFAULT -1,
+  `IF_2019` decimal(6,3)  DEFAULT -1,
+  `IF_2020` decimal(6,3)  DEFAULT -1  
 )"""

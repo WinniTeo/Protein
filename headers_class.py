@@ -1,7 +1,6 @@
 import random
 import requests
 import json
-from agentPool import Proxies
 
 class Headers(object):
     def __init__(self):
@@ -42,8 +41,8 @@ class Headers(object):
 
         
     def getUA(self):
-        self.first_num = random.randint(55, 62)
-        self.third_num = random.randint(0, 3200)
+        self.first_num = random.randint(55, 68)
+        self.third_num = random.randint(0, 3440)
         self.fourth_num = random.randint(0, 140)
 
         self.os_type = [
@@ -76,8 +75,3 @@ class Headers(object):
         self.cookies = json.dumps(self.cookiesDict)
         return self.cookies, self.userAgent
 
-if __name__ == '__main__':
-    head = Headers()
-    print(head.getHeader())
-    # cookie = getCookie()
-    # print(cookie)
