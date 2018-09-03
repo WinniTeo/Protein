@@ -16,7 +16,7 @@ sql = """CREATE TABLE if not EXISTS `paperList` (
   `institution` varchar(100) DEFAULT NULL,
   `citeNumber` int DEFAULT 0 NOT NULL,
   `checkDate` datetime DEFAULT NULL,
-  `impactFactor` decimal(6,3) DEFAULT NULL
+  `impactFactor` decimal(6,3) DEFAULT NULL,
   `currentState` char(1) DEFAULT 'F'
 )""" 
 
@@ -41,7 +41,7 @@ sql = """CREATE TABLE if not EXISTS `impactFactor` (
   `IF_2013` decimal(6,3)  DEFAULT NULL,
   `IF_2014` decimal(6,3)  DEFAULT NULL,
   `IF_2015` decimal(6,3)  DEFAULT NULL,
-  `IF_2017` decimal(6,3)  DEFAULT NULL，
+  `IF_2017` decimal(6,3)  DEFAULT NULL,
 
   `IF_2018` decimal(6,3)  DEFAULT -1,
   `IF_2019` decimal(6,3)  DEFAULT -1,

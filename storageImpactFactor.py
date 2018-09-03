@@ -52,7 +52,7 @@ for i in range(1,nrows):
 
 """
 导入2017影响因子到impactFactor
-"""
+""" 
 path = 'C:\\Users\\WinniTeo\\Desktop\\shixi\\doc\\impactFactor\\2017-2018.xlsx'
 # 打开文件  
 workbook = xlrd.open_workbook(path)  

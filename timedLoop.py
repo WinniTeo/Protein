@@ -7,7 +7,7 @@ db = pymysql.connect("localhost", "root", "user123", "papercrawler", charset = '
 # prepare a cursor object using cursor() method
 cursor = db.cursor()
 
-# 遍历paperlist数据库全部title
+# 遍历paperlist表中全部title
 selectSql = "SELECT title FROM paperlist"
 try:
     # Execute the SQL command
@@ -26,7 +26,7 @@ for title in titles:
     newCiteNumber = str(crawlResult[0])
     newCitingPapersTitles = crawlResult[1]
 
-    # 获取数据库中的论文引用次数
+    # 获取表中的论文引用次数 
     selectSql = "SELECT citeNumber FROM paperlist WHERE title='" + title + "'"
     try:
         # Execute the SQL command

@@ -20,18 +20,12 @@ def crawlGoogleScholar(paperTitle):
     将论文标题进行html的url编码，生成完整的请求链接。对GoogleScholar进行请求，获
     取网页完整的html。使用etree.HTML对网页进行解析。通过xpath提取目标内容————论
     文标题、论文引用次数及其链接。谷歌学术的反爬虫做的很好，会出现爬取不到内容的情
-    况和搜不到文章的情况，我们根据爬取的返回值确定返回值的内容。当获取的引用次数不
-    为一或者为Related articles时就是无效的数据，返回为空，反之，返回爬取的论文标
-    题、论文引用次数及其链接。
+    况和搜不到文章的情况，我们根据爬取的返回值确定返回值的内容。当获取的引用次数字
+    段长度不为一或者为Related articles时就是无效的数据，返回为空，反之，返回爬取
+    的论文引用次数及其链接。
 
     Args:
-        keyword: 
-        req_url: 
-        html: 
-        selector: 
         perPaperTitle: 论文标题
-        numQuotes: 引用次数
-        citingPapersUrl: 引用次数的跳转链接
 
     Returns:
         类型：tuple

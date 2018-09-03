@@ -1,6 +1,6 @@
 
 import pymysql
-# fetch the parameter
+
 import datetime
 
 import xlrd  
@@ -49,7 +49,7 @@ month = date[6:] #时间格式为****-**-**
 # 获取当前时间
 dt =datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# 将命令行数据插入paperlist数据库
+# 将excel中数据插入paperlist数据库
 sql='''insert ignore into paperlist
 (title, author, corAuthor, firstAuthor, author_chs, corAuthor_chs, firstAuthor_chs, journal, date, institution, checkDate) 
 values
@@ -75,7 +75,7 @@ if citeNumber:
         # Rollback in case there is any error
         db.rollback()
 
-# 检测数据库是否存有此年份的影响因子
+# 检测impactFactor表中是否存有此年份的影响因子
 # 如果有获取影响因子
 if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year == '2011' or year == '2012' or year == '2013' or year == '2014' or year == '2015' or year == '2017'):
 
@@ -91,7 +91,7 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
     impactFactor = cursor.fetchone()
     impactFactor = str(impactFactor[0])
     # 当影响因子不为空时，更新paperlist中当前论文的impactFactor字段
-    if impactFactor:
+    if impactFactor: 
         sql = "UPDATE paperList SET impactFactor='" + impactFactor + "',currentState='T' WHERE title='" + title + "'"
         try:
             # Execute the SQL command
