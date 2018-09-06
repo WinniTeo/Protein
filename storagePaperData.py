@@ -112,6 +112,43 @@ if (year == '2007' or year == '2008' or year == '2009' or year == '2010' or year
         except:
             # Rollback in case there is any error
             db.rollback() 
+
+# 当时间大于2017年时，论文影响因子为2017年影响因子            
+elif year > '2017':
+    sql = "SELECT IF_2017 FROM impactFactor WHERE journal='" + journal + "' or abbreviation='" + journal + "'"
+    try:
+        # Execute the SQL command
+        cursor.execute(sql)
+        # Commit your changes in the database
+        db.commit()
+    except:
+        # Rollback in case there is any error
+        db.rollback()
+    impactFactor = cursor.fetchone()
+    impactFactor = str(impactFactor[0])
+    # 当影响因子不为空时，更新paperlist中当前论文的impactFactor字段
+    if impactFactor: 
+        sql = "UPDATE paperList SET impactFactor='" + impactFactor + "',currentState='T' WHERE title='" + title + "'"
+        try:
+            # Execute the SQL command
+            cursor.execute(sql)
+            # Commit your changes in the database
+            db.commit()
+        except:
+            # Rollback in case there is any error
+            db.rollback()   
+    # 当影响因子为空，设impactFactor为0               
+    else:
+        sql = "UPDATE paperList SET impactFactor = 0 WHERE title='" + title + "'"
+        try:
+            # Execute the SQL command
+            cursor.execute(sql)
+            # Commit your changes in the database
+            db.commit()
+        except:
+            # Rollback in case there is any error
+            db.rollback() 
+                
 # 当年份不存在，设impactFactor为0
 else:
     sql = "UPDATE paperList SET impactFactor = 0 WHERE title='" + title + "'"
